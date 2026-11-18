@@ -29,7 +29,41 @@ body{padding-bottom:78px}
 <body><div class="wrap">
 <header class="top"><div class="brand">MERLIN <span>404.EXE</span></div><div class="status">● SENSITIVITY LAB</div></header>
 <section class="hero"><div class="eyebrow">PERFORMANCE TUNING / FREE FIRE</div><h1>Build your <span style="color:var(--red)">perfect aim</span>.</h1><p>A device-aware starting profile for Free Fire and Free Fire MAX. Enter your phone specifications, generate a profile, then fine-tune it in Training Ground.</p></section>
-<section id="login" class="card lock"><h2>🔐 Secure Access</h2><p class="hint">Enter your access key to open the sensitivity lab.</p><div class="field"><label>ACCESS KEY</label><input id="key" type="password" placeholder="Enter your access key" autocomplete="off"></div><button id="unlock">UNLOCK DASHBOARD</button><div id="loginError" class="error"></div></section>
+<section id="welcome" class="card lock">
+  <h2>WELCOME TO MERLIN 404.EXE</h2>
+  <p class="hint">Choose how you want to continue.</p>
+  <button id="customerChoice">CUSTOMER LOGIN</button>
+  <button id="adminChoice" class="secondary">ADMIN LOGIN</button>
+</section>
+
+<section id="welcome" class="card lock">
+  <h2>WELCOME TO MERLIN 404.EXE</h2>
+  <p class="hint">Choose how you want to continue.</p>
+  <button id="customerChoice">CUSTOMER LOGIN</button>
+  <button id="adminChoice" class="secondary">ADMIN LOGIN</button>
+</section>
+
+<section id="login" class="card lock hidden">
+  <h2>CUSTOMER LOGIN</h2>
+  <p class="hint">Enter your access key.</p>
+  <div class="field">
+    <label>ACCESS KEY</label>
+    <input id="key" type="password" placeholder="Enter your access key">
+  </div>
+  <button id="unlock">UNLOCK DASHBOARD</button>
+  <div id="loginError" class="error"></div>
+  <button id="customerBack" class="secondary">BACK</button>
+</section>
+  <h2>CUSTOMER LOGIN</h2>
+  <p class="hint">Enter your access key.</p>
+  <div class="field">
+    <label>ACCESS KEY</label>
+    <input id="key" type="password" placeholder="Enter your access key">
+  </div>
+  <button id="unlock">UNLOCK DASHBOARD</button>
+  <div id="loginError" class="error"></div>
+  <button id="customerBack" class="secondary">BACK</button>
+</section>
 <main id="app" class="hidden">
 <div class="grid">
 <section class="card"><h2>01 / Device profile</h2>
@@ -55,7 +89,19 @@ body{padding-bottom:78px}
 </div>
 <script>
 const $=id=>document.getElementById(id);
+function showPage(page) {
+  ['welcome','login','adminPage','app'].forEach(id => {
+    $(id).classList.toggle('hidden', id !== page);
+  });
+}
 
+$('customerChoice').onclick = () => showPage('login');
+$('adminChoice').onclick = () => showPage('adminPage');
+
+$('customerBack').onclick = () => {
+  $('loginError').textContent = '';
+  showPage('welcome');
+};
 const bgAudio=$('backgroundAudio'), musicToggle=$('musicToggle'), musicDock=$('musicDock');
 const musicState=$('musicState'), musicVolume=$('musicVolume');
 bgAudio.volume=0.22;
