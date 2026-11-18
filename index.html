@@ -164,7 +164,27 @@ $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.write
       <input id="generatedKey" readonly placeholder="Your new key appears here">
     </div>
 
-    <button id="copyGeneratedKey" class="secondary">COPY KEY</button>
+<button id="loadHistory" class="secondary">VIEW KEY HISTORY</button>
+
+<div id="historyArea" class="hidden">
+  <h2>ACCESS KEY HISTORY</h2>
+  <p class="hint">Your generated keys and expiry dates.</p>
+  <div id="historyMessage" class="hint"></div>
+  <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;text-align:left">
+      <thead>
+        <tr>
+          <th>KEY</th>
+          <th>CREATED</th>
+          <th>EXPIRES</th>
+          <th>STATUS</th>
+        </tr>
+      </thead>
+      <tbody id="historyRows"></tbody>
+    </table>
+  </div>
+</div>
+
     <button id="adminLogout" class="secondary">LOG OUT</button>
   </div>
 </section>
@@ -183,6 +203,56 @@ $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.write
   const message = document.getElementById('adminMessage');
   const tools = document.getElementById('keyTools');
 
+document.getElementById('loadHistory').onclick = async () => {
+  const area = document.getElementById('historyArea');
+  const rows = document.getElementById('historyRows');
+  const info = document.getElementById('historyMessage');
+
+  area.classList.remove('hidden');
+  rows.replaceChildren();
+  info.textContent = 'Loading key history...';
+
+  const { data, error } = await client
+    .from('access_keys')
+    .select('key, created_at, expires_at')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    info.textContent = 'Error: ' + error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    info.textContent = 'No generated keys found.';
+    return;
+  }
+
+  info.textContent = data.length + ' keys found.';
+
+  data.forEach(item => {
+    const row = document.createElement('tr');
+
+    const values = [
+      item.key,
+      new Date(item.created_at).toLocaleString(),
+      new Date(item.expires_at).toLocaleString(),
+      new Date(item.expires_at) > new Date()
+        ? 'ACTIVE'
+        : 'EXPIRED'
+    ];
+
+    values.forEach(value => {
+      const cell = document.createElement('td');
+      cell.textContent = value;
+      cell.style.padding = '10px 6px';
+      cell.style.borderBottom = '1px solid #273247';
+      row.appendChild(cell);
+    });
+
+    rows.appendChild(row);
+  });
+};
+  
   document.getElementById('adminLogin').onclick = async () => {
     message.textContent = 'Signing in...';
 
