@@ -318,6 +318,7 @@ document.getElementById('loadHistory').onclick = async () => {
       }
 
       document.getElementById('generatedKey').value = data;
+      updateGeneratedCountdown(expiry);
       message.textContent = days + '-day access key generated successfully.';
     };
   });
