@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090b12">
+<title>MERLIN 404.EXE | FF Sensitivity Lab</title>
+<style>
+:root{--bg:#090b12;--panel:#111622;--panel2:#151d2b;--line:#273247;--text:#edf2fb;--muted:#9aa8bc;--red:#ff365d;--cyan:#54e3d1}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0%,#252039 0,transparent 34%),var(--bg);color:var(--text);font:15px/1.5 Inter,system-ui,Arial,sans-serif}
+.wrap{max-width:1050px;margin:auto;padding:24px 16px 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0 24px;border-bottom:1px solid var(--line)}
+.brand{font-weight:900;letter-spacing:2px;font-size:18px}.brand span{color:var(--red)}.status{font-size:11px;color:var(--cyan);border:1px solid #285e5b;padding:6px 10px;border-radius:30px;letter-spacing:1px}
+.hero{padding:36px 0 22px}.eyebrow{color:var(--red);font-size:11px;letter-spacing:3px;font-weight:800}.hero h1{font-size:clamp(30px,6vw,54px);line-height:1.04;margin:10px 0}.hero p{color:var(--muted);max-width:650px;margin:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}.card{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 16px 45px #0003}.card h2{font-size:16px;margin:0 0 15px}.field{margin:12px 0}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}.field input,.field select{width:100%;padding:12px 13px;border-radius:10px;border:1px solid var(--line);background:#0b101a;color:var(--text);outline:none}.field input:focus,.field select:focus{border-color:var(--red)}
+button{border:0;border-radius:11px;padding:13px 17px;background:var(--red);color:white;font-weight:800;cursor:pointer;width:100%;margin-top:8px}button.secondary{background:#202b3c;border:1px solid var(--line)}button:active{transform:scale(.99)}
+.lock{max-width:480px;margin:34px auto}.hidden{display:none!important}.hint{font-size:12px;color:var(--muted)}.error{color:#ff8297;font-size:12px;margin-top:8px;min-height:18px}
+.results{margin-top:16px}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{padding:13px;background:#0b111b;border:1px solid var(--line);border-radius:12px}.stat small{display:block;color:var(--muted);font-size:11px}.stat strong{font-size:25px;color:var(--cyan)}
+.audio-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.audio-row input{max-width:100%;color:var(--muted)}audio{width:100%;margin-top:12px}
+footer{margin-top:30px;color:#75849a;font-size:11px;text-align:center}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.top{align-items:flex-start}.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body><div class="wrap">
+<header class="top"><div class="brand">MERLIN <span>404.EXE</span></div><div class="status">● SENSITIVITY LAB</div></header>
+<section class="hero"><div class="eyebrow">PERFORMANCE TUNING / FREE FIRE</div><h1>Build your <span style="color:var(--red)">perfect aim</span>.</h1><p>A device-aware starting profile for Free Fire and Free Fire MAX. Enter your phone specifications, generate a profile, then fine-tune it in Training Ground.</p></section>
+<section id="login" class="card lock"><h2>🔐 Secure Access</h2><p class="hint">Enter your access key to open the sensitivity lab.</p><div class="field"><label>ACCESS KEY</label><input id="key" type="password" placeholder="Enter your access key" autocomplete="off"></div><button id="unlock">UNLOCK DASHBOARD</button><div id="loginError" class="error"></div><p class="hint">Demo key: <b>MERLIN-PRO-2026</b>. This front-end demo key is not secure for public release.</p></section>
+<main id="app" class="hidden">
+<div class="grid">
+<section class="card"><h2>01 / Device profile</h2>
+<div class="field"><label>PHONE MODEL</label><input id="phone" placeholder="e.g. Infinix Hot 30i"></div>
+<div class="field"><label>GAME VERSION</label><select id="game"><option>Free Fire</option><option>Free Fire MAX</option></select></div>
+<div class="field"><label>ANDROID VERSION</label><select id="android"><option value="10">Android 10</option><option value="11">Android 11</option><option value="12" selected>Android 12</option><option value="13">Android 13</option><option value="14">Android 14</option><option value="15">Android 15</option><option value="16">Android 16</option></select></div>
+<div class="field"><label>RAM</label><select id="ram"><option value="2">2 GB</option><option value="3">3 GB</option><option value="4" selected>4 GB</option><option value="6">6 GB</option><option value="8">8 GB</option><option value="12">12 GB</option><option value="16">16 GB+</option></select></div>
+<div class="field"><label>TOTAL STORAGE</label><select id="storage"><option value="32">32 GB</option><option value="64" selected>64 GB</option><option value="128">128 GB</option><option value="256">256 GB</option><option value="512">512 GB+</option></select></div>
+<div class="field"><label>PLAY STYLE</label><select id="style"><option value="balanced">Balanced</option><option value="rush">Rusher / close range</option><option value="precision">Precision / long range</option></select></div>
+<button id="generate">GENERATE MY SENSITIVITY</button>
+</section>
+<section class="card"><h2>02 / Your audio</h2><p class="hint">Add your own music or sound. The audio stays on this device and is not uploaded.</p><div class="audio-row"><input id="audioFile" type="file" accept="audio/*"></div><audio id="player" controls class="hidden"></audio><p id="audioName" class="hint">No audio selected.</p><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><h2>03 / Aim tuning notes</h2><p class="hint">Start with the generated values, test drag speed and recoil in Training Ground, and adjust in small steps. Device touch response, FPS, screen size and personal control layout also matter.</p></section>
+</div>
+<section id="output" class="card results hidden"><h2>04 / Generated sensitivity profile</h2><p id="summary" class="hint"></p><div class="stats" id="stats"></div><button class="secondary" id="copy">COPY SETTINGS</button><p class="hint">Scale: 0–200. These are estimated starting values, not guaranteed “perfect” settings. Sensitivity does not modify game files or guarantee headshots.</p></section>
+</main>
+<footer>MERLIN 404.EXE · DEVICE-AWARE SENSITIVITY TOOL · NOT AFFILIATED WITH GARENA</footer>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+$('unlock').addEventListener('click',()=>{
+  if($('key').value.trim()==='MERLIN-PRO-2026'){$('login').classList.add('hidden');$('app').classList.remove('hidden');}
+  else $('loginError').textContent='Invalid access key. Check it and try again.';
+});
+$('key').addEventListener('keydown',e=>{if(e.key==='Enter')$('unlock').click()});
+$('audioFile').addEventListener('change',()=>{
+ const file=$('audioFile').files[0]; if(!file)return;
+ const old=$('player').src;if(old)URL.revokeObjectURL(old);
+ $('player').src=URL.createObjectURL(file);$('player').classList.remove('hidden');$('audioName').textContent='Loaded: '+file.name;
+});
+let latest='';
+$('generate').addEventListener('click',()=>{
+ const ram=+$('ram').value, storage=+$('storage').value, android=+$('android').value;
+ const max=$('game').value==='Free Fire MAX', style=$('style').value;
+ // Conservative device-capacity adjustment; all outputs are capped to the game's 0–200 scale.
+ let base=ram<=2?125:ram<=3?145:ram<=4?165:ram<=6?178:188;
+ if(max)base-=ram<=3?12:6;
+ if(storage<=32)base-=3; if(android<=10)base-=2;
+ const adj=style==='rush'?8:style==='precision'?-10:0;
+ const clamp=n=>Math.max(80,Math.min(200,Math.round(n)));
+ const vals=[
+  ['General',clamp(base+adj)],['Red Dot',clamp(base+adj-5)],
+  ['2x Scope',clamp(base+adj-17)],['4x Scope',clamp(base+adj-29)],
+  ['Sniper Scope',clamp(base+adj-48)],['Free Look',clamp(base+adj+5)]
+ ];
+ latest=vals.map(v=>v[0]+': '+v[1]).join('\n');
+ $('summary').textContent=($('phone').value.trim()||'Your device')+' · '+$('game').value+' · '+ram+' GB RAM · '+storage+' GB storage · Android '+android;
+ $('stats').innerHTML=vals.map(v=>'<div class="stat"><small>'+v[0]+'</small><strong>'+v[1]+'</strong></div>').join('');
+ $('output').classList.remove('hidden');$('output').scrollIntoView({behavior:'smooth',block:'start'});
+});
+$('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(latest);$('copy').textContent='COPIED!';setTimeout(()=>$('copy').textContent='COPY SETTINGS',1500)}catch(e){$('copy').textContent='Copy unavailable in this browser';}});
+</script></body></html>
