@@ -202,7 +202,37 @@ $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.write
 
   const message = document.getElementById('adminMessage');
   const tools = document.getElementById('keyTools');
+let generatedCountdownTimer = null;
 
+function updateGeneratedCountdown(expiry) {
+  const display = document.getElementById('generatedCountdown');
+
+  if (generatedCountdownTimer) {
+    clearInterval(generatedCountdownTimer);
+  }
+
+  function update() {
+    const remaining = new Date(expiry).getTime() - Date.now();
+
+    if (remaining <= 0) {
+      display.textContent = 'EXPIRED';
+      clearInterval(generatedCountdownTimer);
+      return;
+    }
+
+    const days = Math.floor(remaining / 86400000);
+    const hours = Math.floor((remaining % 86400000) / 3600000);
+    const minutes = Math.floor((remaining % 3600000) / 60000);
+    const seconds = Math.floor((remaining % 60000) / 1000);
+
+    display.textContent =
+      'Time remaining: ' + days + 'd ' +
+      hours + 'h ' + minutes + 'm ' + seconds + 's';
+  }
+
+  update();
+  generatedCountdownTimer = setInterval(update, 1000);
+  }
 document.getElementById('loadHistory').onclick = async () => {
   const area = document.getElementById('historyArea');
   const rows = document.getElementById('historyRows');
@@ -291,7 +321,7 @@ document.getElementById('loadHistory').onclick = async () => {
       message.textContent = days + '-day access key generated successfully.';
     };
   });
-
+updateGeneratedCountdown(expiry);
   document.getElementById('copyGeneratedKey').onclick = async () => {
     const key = document.getElementById('generatedKey').value;
     if (!key) {
