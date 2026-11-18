@@ -1,22 +1,23 @@
 MERLIN 404.EXE — FF SENSITIVITY LAB
 
-CONTENTS
-- index.html: complete responsive website (HTML/CSS/JavaScript).
+FILES
+- index.html: responsive sensitivity website
+- aura.m4a: supplied background soundtrack
+- README.txt: setup notes
 
-QUICK TEST ON ANDROID
-1. Extract the ZIP.
-2. Open index.html with Chrome.
-3. Use demo access key: MERLIN-PRO-2026.
-4. Enter device RAM, storage, Android version and game edition.
-5. Choose a play style and generate.
-6. Select an audio file to play it in the page.
+ANDROID TEST
+1. Extract this ZIP.
+2. Keep index.html and aura.m4a together in the same folder.
+3. Open index.html with Chrome.
+4. Unlock with demo key: MERLIN-PRO-2026.
+5. Music attempts to start after the unlock tap. If blocked by browser policy, tap ▶ in the MERLIN SOUNDTRACK bar.
+6. Use VOL to adjust background volume. The track loops.
 
-IMPORTANT SECURITY NOTE
-The included access key is only a front-end demo. Anyone can inspect the source and discover it.
-For a public website, replace this with server-side key validation (for example, Supabase Edge Function + database + expiry checks). Never put a Supabase service-role key or private secret in index.html.
+PUBLIC DEPLOYMENT
+Upload BOTH index.html and aura.m4a to the root of the GitHub repository, replacing the old index.html. Keep filenames exactly as shown.
 
-SENSITIVITY NOTE
-The values are estimates for a starting point, not guaranteed perfect settings. RAM, storage and Android version alone cannot determine ideal sensitivity; FPS, screen/touch response, DPI, screen size and player preference matter too. Test and adjust in Training Ground.
+SECURITY
+The demo key is front-end only and is not secure for public use. Use server-side validation (for example, Supabase Edge Function + database expiry checks) before public launch. Never expose a Supabase service-role key in browser code.
 
-AUDIO
-Audio is selected locally in the browser and is not uploaded to a server.
+SENSITIVITY
+Generated values are estimates, not guaranteed perfect settings. Test and tune in Training Ground.

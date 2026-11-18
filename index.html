@@ -17,6 +17,13 @@ button{border:0;border-radius:11px;padding:13px 17px;background:var(--red);color
 .audio-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.audio-row input{max-width:100%;color:var(--muted)}audio{width:100%;margin-top:12px}
 footer{margin-top:30px;color:#75849a;font-size:11px;text-align:center}
 @media(max-width:700px){.grid{grid-template-columns:1fr}.top{align-items:flex-start}.stats{grid-template-columns:1fr 1fr}}
+
+.music-dock{position:fixed;z-index:20;left:50%;bottom:14px;transform:translateX(-50%);width:min(460px,calc(100% - 28px));display:flex;align-items:center;gap:13px;padding:11px 14px;background:rgba(10,14,23,.94);border:1px solid #344056;border-radius:15px;box-shadow:0 12px 38px #0009;backdrop-filter:blur(16px)}
+.music-meta{display:flex;align-items:center;gap:10px;min-width:0;flex:1}.music-meta strong{display:block;font-size:10px;letter-spacing:1.5px}.music-meta small{display:block;color:#91a0b6;font-size:10px;margin-top:2px}.music-pulse{width:9px;height:9px;flex:none;border-radius:50%;background:#68758a;box-shadow:0 0 0 4px #68758a22}.music-dock.playing .music-pulse{background:var(--cyan);box-shadow:0 0 12px var(--cyan);animation:pulse 1.5s infinite}
+@keyframes pulse{50%{opacity:.45;transform:scale(.82)}}
+.music-toggle{width:38px;height:38px;flex:none;margin:0;padding:0;border-radius:50%;background:var(--red);font-size:14px}.volume-control{display:flex;align-items:center;gap:7px;color:#91a0b6;font-size:9px;letter-spacing:1px}.volume-control input{width:65px;accent-color:var(--red)}
+body{padding-bottom:78px}
+
 </style>
 </head>
 <body><div class="wrap">
@@ -34,16 +41,37 @@ footer{margin-top:30px;color:#75849a;font-size:11px;text-align:center}
 <div class="field"><label>PLAY STYLE</label><select id="style"><option value="balanced">Balanced</option><option value="rush">Rusher / close range</option><option value="precision">Precision / long range</option></select></div>
 <button id="generate">GENERATE MY SENSITIVITY</button>
 </section>
-<section class="card"><h2>02 / Your audio</h2><p class="hint">Add your own music or sound. The audio stays on this device and is not uploaded.</p><div class="audio-row"><input id="audioFile" type="file" accept="audio/*"></div><audio id="player" controls class="hidden"></audio><p id="audioName" class="hint">No audio selected.</p><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><h2>03 / Aim tuning notes</h2><p class="hint">Start with the generated values, test drag speed and recoil in Training Ground, and adjust in small steps. Device touch response, FPS, screen size and personal control layout also matter.</p></section>
+<section class="card"><h2>02 / Your audio</h2><p class="hint">The MERLIN soundtrack plays in the background at low volume. You can also select your own audio below; it stays on this device.</p><div class="audio-row"><input id="audioFile" type="file" accept="audio/*"></div><audio id="player" controls class="hidden"></audio><p id="audioName" class="hint">No audio selected.</p><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><h2>03 / Aim tuning notes</h2><p class="hint">Start with the generated values, test drag speed and recoil in Training Ground, and adjust in small steps. Device touch response, FPS, screen size and personal control layout also matter.</p></section>
 </div>
 <section id="output" class="card results hidden"><h2>04 / Generated sensitivity profile</h2><p id="summary" class="hint"></p><div class="stats" id="stats"></div><button class="secondary" id="copy">COPY SETTINGS</button><p class="hint">Scale: 0–200. These are estimated starting values, not guaranteed “perfect” settings. Sensitivity does not modify game files or guarantee headshots.</p></section>
 </main>
 <footer>MERLIN 404.EXE · DEVICE-AWARE SENSITIVITY TOOL · NOT AFFILIATED WITH GARENA</footer>
 </div>
+<div class="music-dock" id="musicDock" aria-label="Background music player">
+  <div class="music-meta"><span class="music-pulse"></span><div><strong>MERLIN SOUNDTRACK</strong><small id="musicState">Ready · tap play</small></div></div>
 <script>
 const $=id=>document.getElementById(id);
+
+const bgAudio=$('backgroundAudio'), musicToggle=$('musicToggle'), musicDock=$('musicDock');
+const musicState=$('musicState'), musicVolume=$('musicVolume');
+bgAudio.volume=0.22;
+function paintMusic(playing){
+  musicDock.classList.toggle('playing',playing);
+  musicToggle.textContent=playing?'Ⅱ':'▶';
+  musicToggle.setAttribute('aria-label',playing?'Pause background music':'Play background music');
+  musicState.textContent=playing?'Now playing · loop enabled':'Paused · tap play';
+}
+async function startMusic(){
+  try{await bgAudio.play();paintMusic(true);}
+  catch(e){paintMusic(false);musicState.textContent='Tap play to start audio';}
+}
+musicToggle.addEventListener('click',()=>bgAudio.paused?startMusic():(bgAudio.pause(),paintMusic(false)));
+musicVolume.addEventListener('input',()=>{bgAudio.volume=Number(musicVolume.value)/100;});
+bgAudio.addEventListener('pause',()=>paintMusic(false));
+bgAudio.addEventListener('play',()=>paintMusic(true));
+
 $('unlock').addEventListener('click',()=>{
-  if($('key').value.trim()==='MERLIN-PRO-2026'){$('login').classList.add('hidden');$('app').classList.remove('hidden');}
+  if($('key').value.trim()==='MERLIN-PRO-2026'){$('login').classList.add('hidden');$('app').classList.remove('hidden');startMusic();}
   else $('loginError').textContent='Invalid access key. Check it and try again.';
 });
 $('key').addEventListener('keydown',e=>{if(e.key==='Enter')$('unlock').click()});
@@ -73,4 +101,9 @@ $('generate').addEventListener('click',()=>{
  $('output').classList.remove('hidden');$('output').scrollIntoView({behavior:'smooth',block:'start'});
 });
 $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(latest);$('copy').textContent='COPIED!';setTimeout(()=>$('copy').textContent='COPY SETTINGS',1500)}catch(e){$('copy').textContent='Copy unavailable in this browser';}});
-</script></body></html>
+</script>
+  <button class="music-toggle" id="musicToggle" type="button" aria-label="Play background music">▶</button>
+  <label class="volume-control" title="Music volume"><span>VOL</span><input id="musicVolume" type="range" min="0" max="100" value="22" aria-label="Music volume"></label>
+  <audio id="backgroundAudio" src="aura.m4a" preload="auto" loop></audio>
+</div>
+</body></html>
