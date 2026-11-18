@@ -105,5 +105,108 @@ $('generate').addEventListener('click',()=>{
  $('output').classList.remove('hidden');$('output').scrollIntoView({behavior:'smooth',block:'start'});
 });
 $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(latest);$('copy').textContent='COPIED!';setTimeout(()=>$('copy').textContent='COPY SETTINGS',1500)}catch(e){$('copy').textContent='Copy unavailable in this browser';}});
+</script><!-- MERLIN ADMIN KEY GENERATOR -->
+<section class="card" style="max-width:600px;margin:25px auto">
+  <h2>🔐 MERLIN ADMIN KEY GENERATOR</h2>
+  <p class="hint">Sign in with your Supabase admin account.</p>
+
+  <div class="field">
+    <label>ADMIN EMAIL</label>
+    <input id="adminEmail" type="email" placeholder="Your admin email">
+  </div>
+
+  <div class="field">
+    <label>ADMIN PASSWORD</label>
+    <input id="adminPassword" type="password" placeholder="Your admin password">
+  </div>
+
+  <button id="adminLogin">ADMIN LOGIN</button>
+  <p id="adminMessage" class="error"></p>
+
+  <div id="keyTools" class="hidden">
+    <h2>Generate Access Key</h2>
+    <button class="keyGenerate" data-days="1">GENERATE 1-DAY KEY</button>
+    <button class="keyGenerate secondary" data-days="7">GENERATE 7-DAY KEY</button>
+
+    <div class="field">
+      <label>GENERATED ACCESS KEY</label>
+      <input id="generatedKey" readonly placeholder="Your new key appears here">
+    </div>
+
+    <button id="copyGeneratedKey" class="secondary">COPY KEY</button>
+    <button id="adminLogout" class="secondary">LOG OUT</button>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const SUPABASE_URL = 'https://iztnlyuopruqrmxhszbh.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_C9QR47PTcY8_JAdPhuDu6g_gFCEasv_';
+
+  const client = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  const message = document.getElementById('adminMessage');
+  const tools = document.getElementById('keyTools');
+
+  document.getElementById('adminLogin').onclick = async () => {
+    message.textContent = 'Signing in...';
+
+    const { data, error } = await client.auth.signInWithPassword({
+      email: document.getElementById('adminEmail').value.trim(),
+      password: document.getElementById('adminPassword').value
+    });
+
+    if (error) {
+      message.textContent = error.message;
+      return;
+    }
+
+    tools.classList.remove('hidden');
+    message.textContent = 'Signed in. Admin permission will be checked when generating a key.';
+  };
+
+  document.querySelectorAll('.keyGenerate').forEach(button => {
+    button.onclick = async () => {
+      const days = Number(button.dataset.days);
+      const expiry = new Date(Date.now() + days * 86400000);
+
+      message.textContent = 'Generating key...';
+
+      const { data, error } = await client.rpc(
+        'admin_create_access_key',
+        { p_expires_at: expiry.toISOString() }
+      );
+
+      if (error) {
+        message.textContent = error.message;
+        return;
+      }
+
+      document.getElementById('generatedKey').value = data;
+      message.textContent = days + '-day access key generated successfully.';
+    };
+  });
+
+  document.getElementById('copyGeneratedKey').onclick = async () => {
+    const key = document.getElementById('generatedKey').value;
+    if (!key) {
+      message.textContent = 'Generate a key first.';
+      return;
+    }
+
+    await navigator.clipboard.writeText(key);
+    message.textContent = 'Key copied!';
+  };
+
+  document.getElementById('adminLogout').onclick = async () => {
+    await client.auth.signOut();
+    tools.classList.add('hidden');
+    message.textContent = 'Logged out.';
+  };
+})();
 </script>
 </body></html>
