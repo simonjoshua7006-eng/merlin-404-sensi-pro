@@ -74,10 +74,41 @@ musicVolume.addEventListener('input',()=>{bgAudio.volume=Number(musicVolume.valu
 bgAudio.addEventListener('pause',()=>paintMusic(false));
 bgAudio.addEventListener('play',()=>paintMusic(true));
 
-$('unlock').addEventListener('click',()=>{
-  if($('key').value.trim()==='MERLIN-PRO-2026'){$('login').classList.add('hidden');$('app').classList.remove('hidden');startMusic();}
-  else $('loginError').textContent='Invalid access key. Check it and try again.';
+
+$('unlock').addEventListener('click', async () => {
+  const entered = $('key').value.trim();
+  const error = $('loginError');
+
+  error.textContent = 'Checking access key...';
+
+  if (!window.merlinSupabase) {
+    error.textContent = 'Connection loading. Refresh and try again.';
+    return;
+  }
+
+  try {
+    const { data, error: rpcError } =
+      await window.merlinSupabase.rpc(
+        'validate_access_key',
+        { p_key: entered }
+      );
+
+    if (rpcError) throw rpcError;
+
+    if (data === true) {
+      error.textContent = '';
+      $('login').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      startMusic();
+    } else {
+      error.textContent = 'Invalid or expired access key.';
+    }
+  } catch (e) {
+    error.textContent =
+      'Access check failed: ' + e.message;
+  }
 });
+
 $('key').addEventListener('keydown',e=>{if(e.key==='Enter')$('unlock').click()});
 $('audioFile').addEventListener('change',()=>{
  const file=$('audioFile').files[0]; if(!file)return;
