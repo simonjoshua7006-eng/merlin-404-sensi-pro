@@ -120,7 +120,7 @@ bgAudio.addEventListener('pause',()=>paintMusic(false));
 bgAudio.addEventListener('play',()=>paintMusic(true));
 
 
-$('unlock').addEventListener('click', async () => {
+$('key').addEventListener('keydown',e=>{if(e.key==='Enter')$('unlock').click()});
   const entered = $('key').value.trim();
   const error = $('loginError');
 
@@ -194,7 +194,7 @@ $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.write
     <label>ADMIN PASSWORD</label>
     <input id="adminPassword" type="password" placeholder="Your admin password">
   </div>
-
+  <button id="adminLogin">SIGN IN</button>
   <button id="adminBack" class="secondary">BACK</button>
   <p id="adminMessage" class="error"></p>
 
@@ -206,7 +206,7 @@ $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.write
     <div class="field">
       <label>GENERATED ACCESS KEY</label>
       <input id="generatedKey" readonly placeholder="Your new key appears here">
-    </div>
+    </div><button id="copyGeneratedKey" class="secondary">COPY GENERATED KEY</button>
 <p id="generatedCountdown" class="hint">Generate a key to start its expiration countdown.</p>
 <button id="loadHistory" class="secondary">VIEW KEY HISTORY</button>
 
@@ -372,18 +372,27 @@ document.getElementById('loadHistory').onclick = async () => {
   });
 
   document.getElementById('copyGeneratedKey').onclick = async () => {
-    const key = document.getElementById('generatedKey').value=date;
-    if (!key) {updateGeneratedCountdown(expiry);
-      message.textContent = 'Generate a key first.';
-      return;
-    }
+  const key = document.getElementById('generatedKey').value.trim();
+  const message = document.getElementById('adminMessage');
 
+  if (!key) {
+    message.textContent = 'Generate a key first.';
+    return;
+  }
+
+  try {
     await navigator.clipboard.writeText(key);
     message.textContent = 'Key copied!';
-  };
+  } catch (error) {
+    message.textContent = 'Copy failed. Please copy the key manually.';
+  }
+};
 
   document.getElementById('adminLogout').onclick = async () => {
   await client.auth.signOut();
+  document.getElementById('keyTools').classList.add('hidden');
+  document.getElementById('adminMessage').textContent = 'Logged out.';
+  showPage('welcome');};
 
   tools.classList.add('hidden');
   document.getElementById('adminEmail').disabled = false;
