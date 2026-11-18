@@ -143,8 +143,7 @@ $('unlock').addEventListener('click', async () => {
 
     if (data === true) {
       error.textContent = '';
-      $('login').classList.add('hidden');
-      $('app').classList.remove('hidden');
+     showPage('app');
       startMusic();
     } else {
       error.textContent = 'Invalid or expired access key.';
@@ -183,7 +182,7 @@ $('generate').addEventListener('click',()=>{
 });
 $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(latest);$('copy').textContent='COPIED!';setTimeout(()=>$('copy').textContent='COPY SETTINGS',1500)}catch(e){$('copy').textContent='Copy unavailable in this browser';}});
 </script><!-- MERLIN ADMIN KEY GENERATOR -->
-<section class="card" style="max-width:600px;margin:25px auto">
+<section id="adminPage" class="card lock hidden">
   <h2>🔐 MERLIN ADMIN KEY GENERATOR</h2>
   <p class="hint">Sign in with your Supabase admin account.</p>
 
@@ -197,7 +196,7 @@ $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.write
     <input id="adminPassword" type="password" placeholder="Your admin password">
   </div>
 
-  <button id="adminLogin">ADMIN LOGIN</button>
+  <button id="adminBack" class="secondary">BACK</button>
   <p id="adminMessage" class="error"></p>
 
   <div id="keyTools" class="hidden">
@@ -248,6 +247,10 @@ $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.write
 
   const message = document.getElementById('adminMessage');
   const tools = document.getElementById('keyTools');
+  document.getElementById('adminBack').onclick = () => {
+  document.getElementById('adminMessage').textContent = '';
+  showPage('welcome');
+};
 let generatedCountdownTimer = null;
 
 function updateGeneratedCountdown(expiry) {
@@ -381,6 +384,18 @@ document.getElementById('loadHistory').onclick = async () => {
   };
 
   document.getElementById('adminLogout').onclick = async () => {
+  await client.auth.signOut();
+
+  tools.classList.add('hidden');
+  document.getElementById('adminEmail').disabled = false;
+  document.getElementById('adminPassword').disabled = false;
+  document.getElementById('adminLogin').classList.remove('hidden');
+  document.getElementById('adminBack').classList.remove('hidden');
+  document.getElementById('adminPassword').value = '';
+
+  message.textContent = 'Logged out.';
+  showPage('welcome');
+};
     await client.auth.signOut();
     tools.classList.add('hidden');
     message.textContent = 'Logged out.';
