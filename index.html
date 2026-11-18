@@ -321,10 +321,10 @@ document.getElementById('loadHistory').onclick = async () => {
       message.textContent = days + '-day access key generated successfully.';
     };
   });
-updateGeneratedCountdown(expiry);
+
   document.getElementById('copyGeneratedKey').onclick = async () => {
-    const key = document.getElementById('generatedKey').value;
-    if (!key) {
+    const key = document.getElementById('generatedKey').value=date;
+    if (!key) {updateGeneratedCountdown(expiry);
       message.textContent = 'Generate a key first.';
       return;
     }
