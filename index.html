@@ -49,6 +49,10 @@ body{padding-bottom:78px}
 </div>
 <div class="music-dock" id="musicDock" aria-label="Background music player">
   <div class="music-meta"><span class="music-pulse"></span><div><strong>MERLIN SOUNDTRACK</strong><small id="musicState">Ready · tap play</small></div></div>
+  <button class="music-toggle" id="musicToggle" type="button" aria-label="Play background music">▶</button>
+  <label class="volume-control" title="Music volume"><span>VOL</span><input id="musicVolume" type="range" min="0" max="100" value="22" aria-label="Music volume"></label>
+  <audio id="backgroundAudio" src="aura.m4a" preload="auto" loop></audio>
+</div>
 <script>
 const $=id=>document.getElementById(id);
 
@@ -102,8 +106,4 @@ $('generate').addEventListener('click',()=>{
 });
 $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(latest);$('copy').textContent='COPIED!';setTimeout(()=>$('copy').textContent='COPY SETTINGS',1500)}catch(e){$('copy').textContent='Copy unavailable in this browser';}});
 </script>
-  <button class="music-toggle" id="musicToggle" type="button" aria-label="Play background music">▶</button>
-  <label class="volume-control" title="Music volume"><span>VOL</span><input id="musicVolume" type="range" min="0" max="100" value="22" aria-label="Music volume"></label>
-  <audio id="backgroundAudio" src="aura.m4a" preload="auto" loop></audio>
-</div>
 </body></html>
