@@ -147,7 +147,7 @@ $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.write
   const client = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
-  );
+  );window.merlinSupabase = client;
 
   const message = document.getElementById('adminMessage');
   const tools = document.getElementById('keyTools');
